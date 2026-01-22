@@ -57,7 +57,7 @@
     * Buka file `koneksi.php`.
     * Sesuaikan user/password database jika perlu.
 4.  **Run!**
-    * Buka browser dan akses `http://localhost/uangku-rpg`.
+    * Buka browser dan akses `http://localhost/uangku`.
     * **Default Login:** Buat akun baru di menu Register.
 
 ## 📝 License
