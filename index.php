@@ -11,6 +11,13 @@
 
     <div class="game-container">
 
+        <?php
+        // Ambil data dari URL (?bulan=...&tahun=...)
+        // Kalau tidak ada, pakai bulan & tahun SEKARANG (default)
+        $bulan_dipilih = $_GET['bulan'] ?? date('m');
+        $tahun_dipilih = $_GET['tahun'] ?? date('Y');
+        ?>
+
         <h2>Aplikasi Pencatat Keuangan 💰</h2>
 
         <form action="tambah.php" method="POST">
@@ -36,39 +43,77 @@
         </form>
 
         <hr>
-        
+
+        <form action="" method="GET" style="text-align: center; border:none; background: transparent; padding:10px;">
+            <label style="display:inline-block; margin-right: 10px;">Filter Laporan:</label>
+            
+            <select name="bulan" style="width: auto; display:inline-block;">
+                <option value="01" <?php if($bulan_dipilih=='01') echo 'selected'; ?>>Januari</option>
+                <option value="02" <?php if($bulan_dipilih=='02') echo 'selected'; ?>>Februari</option>
+                <option value="03" <?php if($bulan_dipilih=='03') echo 'selected'; ?>>Maret</option>
+                <option value="04" <?php if($bulan_dipilih=='04') echo 'selected'; ?>>April</option>
+                <option value="05" <?php if($bulan_dipilih=='05') echo 'selected'; ?>>Mei</option>
+                <option value="06" <?php if($bulan_dipilih=='06') echo 'selected'; ?>>Juni</option>
+                <option value="07" <?php if($bulan_dipilih=='07') echo 'selected'; ?>>Juli</option>
+                <option value="08" <?php if($bulan_dipilih=='08') echo 'selected'; ?>>Agustus</option>
+                <option value="09" <?php if($bulan_dipilih=='09') echo 'selected'; ?>>September</option>
+                <option value="10" <?php if($bulan_dipilih=='10') echo 'selected'; ?>>Oktober</option>
+                <option value="11" <?php if($bulan_dipilih=='11') echo 'selected'; ?>>November</option>
+                <option value="12" <?php if($bulan_dipilih=='12') echo 'selected'; ?>>Desember</option>
+            </select>
+            
+            <select name="tahun" style="width: auto; display:inline-block;">
+                <?php
+                $tahun_sekarang = date('Y');
+                for($i = $tahun_sekarang; $i >= $tahun_sekarang - 5; $i--){
+                    $pilih = ($tahun_dipilih == $i) ? 'selected' : '';
+                    echo "<option value='$i' $pilih>$i</option>";
+                }
+                ?>
+            </select>
+
+            <button type="submit" style="width: auto; padding: 10px;">Cek</button>
+        </form>
+
         <?php
-        // --- PERBAIKAN DI SINI ---
-        // Kita panggil koneksi DULUAN sebelum minta data ke database
         include 'koneksi.php'; 
 
-        // 1. Hitung Total Pemasukan
-        $queryMasuk = "SELECT SUM(jumlah) AS total_masuk FROM transaksi WHERE jenis='Pemasukan'";
+        // 1. Hitung Pemasukan (Sesuai Bulan & Tahun)
+        $queryMasuk = "SELECT SUM(jumlah) AS total_masuk FROM transaksi 
+                       WHERE jenis='Pemasukan' 
+                       AND MONTH(tanggal)='$bulan_dipilih' 
+                       AND YEAR(tanggal)='$tahun_dipilih'";
         $resultMasuk = mysqli_query($koneksi, $queryMasuk);
         $rowMasuk = mysqli_fetch_assoc($resultMasuk);
-        $totalMasuk = $rowMasuk['total_masuk'] ?? 0;
+        $totalMasuk = $rowMasuk['total_masuk'] ?? 0; // Pakai 0 jika kosong
 
-        // 2. Hitung Total Pengeluaran
-        $queryKeluar = "SELECT SUM(jumlah) AS total_keluar FROM transaksi WHERE jenis='Pengeluaran'";
+        // 2. Hitung Pengeluaran (Sesuai Bulan & Tahun)
+        $queryKeluar = "SELECT SUM(jumlah) AS total_keluar FROM transaksi 
+                        WHERE jenis='Pengeluaran' 
+                        AND MONTH(tanggal)='$bulan_dipilih' 
+                        AND YEAR(tanggal)='$tahun_dipilih'";
         $resultKeluar = mysqli_query($koneksi, $queryKeluar);
         $rowKeluar = mysqli_fetch_assoc($resultKeluar);
-        $totalKeluar = $rowKeluar['total_keluar'] ?? 0;
+        $totalKeluar = $rowKeluar['total_keluar'] ?? 0; // Pakai 0 jika kosong
 
-        // 3. Hitung Saldo Akhir
+        // 3. Saldo Akhir
         $saldo = $totalMasuk - $totalKeluar;
         ?>
 
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <div style="background: #2d1b4e; color: #00e676; padding: 15px; width: 33%; border: 4px solid #000;">
                 <small>PEMASUKAN</small><br>
+                <span style="font-size: 10px;">(Bulan Ini)</span><br>
                 Rp <?php echo number_format($totalMasuk, 0, ',', '.'); ?>
             </div>
             <div style="background: #2d1b4e; color: #ff1744; padding: 15px; width: 33%; border: 4px solid #000;">
                 <small>PENGELUARAN</small><br>
+                <span style="font-size: 10px;">(Bulan Ini)</span><br>
                 Rp <?php echo number_format($totalKeluar, 0, ',', '.'); ?>
             </div>
             <div style="background: #2d1b4e; color: #fff; padding: 15px; width: 33%; border: 4px solid #000;">
                 <small>SISA SALDO</small><br>
+                <span style="font-size: 10px;">(Bulan Ini)</span><br>
                 Rp <?php echo number_format($saldo, 0, ',', '.'); ?>
             </div>
         </div>
@@ -88,18 +133,24 @@
             </thead>
             <tbody>
                 <?php
-                // Di sini tidak perlu include 'koneksi.php' lagi karena sudah di atas.
-                // Langsung pakai saja variabel $koneksi-nya.
-                
-                $query = "SELECT * FROM transaksi ORDER BY id DESC";
+                // LOGIKA 3: TAMPILKAN DATA TABEL (DENGAN FILTER)
+                $query = "SELECT * FROM transaksi 
+                          WHERE MONTH(tanggal)='$bulan_dipilih' 
+                          AND YEAR(tanggal)='$tahun_dipilih'
+                          ORDER BY tanggal DESC"; // Diurutkan tanggal terbaru
+                          
                 $result = mysqli_query($koneksi, $query);
+
+                // Cek jika data kosong
+                if(mysqli_num_rows($result) == 0){
+                    echo "<tr><td colspan='6' style='text-align:center;'>Belum ada data di bulan ini.</td></tr>";
+                }
 
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     echo "<td>" . $row['tanggal'] . "</td>";
                     
-                    // Warna teks hijau/merah biar lebih jelas
-                    $warna = ($row['jenis'] == 'Pemasukan') ? 'green' : 'red';
+                    $warna = ($row['jenis'] == 'Pemasukan') ? '#00e676' : '#ff1744';
                     echo "<td style='color:$warna;'>" . $row['jenis'] . "</td>";
                     
                     echo "<td>" . $row['kategori'] . "</td>";
