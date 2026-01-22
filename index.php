@@ -6,14 +6,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <div class="game-container">
 
         <?php
-        // Ambil data dari URL (?bulan=...&tahun=...)
-        // Kalau tidak ada, pakai bulan & tahun SEKARANG (default)
         $bulan_dipilih = $_GET['bulan'] ?? date('m');
         $tahun_dipilih = $_GET['tahun'] ?? date('Y');
         ?>
@@ -46,7 +46,6 @@
 
         <form action="" method="GET" style="text-align: center; border:none; background: transparent; padding:10px;">
             <label style="display:inline-block; margin-right: 10px;">Filter Laporan:</label>
-            
             <select name="bulan" style="width: auto; display:inline-block;">
                 <option value="01" <?php if($bulan_dipilih=='01') echo 'selected'; ?>>Januari</option>
                 <option value="02" <?php if($bulan_dipilih=='02') echo 'selected'; ?>>Februari</option>
@@ -61,7 +60,6 @@
                 <option value="11" <?php if($bulan_dipilih=='11') echo 'selected'; ?>>November</option>
                 <option value="12" <?php if($bulan_dipilih=='12') echo 'selected'; ?>>Desember</option>
             </select>
-            
             <select name="tahun" style="width: auto; display:inline-block;">
                 <?php
                 $tahun_sekarang = date('Y');
@@ -71,32 +69,30 @@
                 }
                 ?>
             </select>
-
             <button type="submit" style="width: auto; padding: 10px;">Cek</button>
         </form>
 
         <?php
         include 'koneksi.php'; 
 
-        // 1. Hitung Pemasukan (Sesuai Bulan & Tahun)
+        // Hitung Pemasukan
         $queryMasuk = "SELECT SUM(jumlah) AS total_masuk FROM transaksi 
                        WHERE jenis='Pemasukan' 
                        AND MONTH(tanggal)='$bulan_dipilih' 
                        AND YEAR(tanggal)='$tahun_dipilih'";
         $resultMasuk = mysqli_query($koneksi, $queryMasuk);
         $rowMasuk = mysqli_fetch_assoc($resultMasuk);
-        $totalMasuk = $rowMasuk['total_masuk'] ?? 0; // Pakai 0 jika kosong
+        $totalMasuk = $rowMasuk['total_masuk'] ?? 0;
 
-        // 2. Hitung Pengeluaran (Sesuai Bulan & Tahun)
+        // Hitung Pengeluaran
         $queryKeluar = "SELECT SUM(jumlah) AS total_keluar FROM transaksi 
                         WHERE jenis='Pengeluaran' 
                         AND MONTH(tanggal)='$bulan_dipilih' 
                         AND YEAR(tanggal)='$tahun_dipilih'";
         $resultKeluar = mysqli_query($koneksi, $queryKeluar);
         $rowKeluar = mysqli_fetch_assoc($resultKeluar);
-        $totalKeluar = $rowKeluar['total_keluar'] ?? 0; // Pakai 0 jika kosong
+        $totalKeluar = $rowKeluar['total_keluar'] ?? 0;
 
-        // 3. Saldo Akhir
         $saldo = $totalMasuk - $totalKeluar;
         ?>
 
@@ -117,7 +113,78 @@
                 Rp <?php echo number_format($saldo, 0, ',', '.'); ?>
             </div>
         </div>
-        
+
+        <?php
+        // Kita hanya ingin grafik Pengeluaran saja biar tau uang habis kemana
+        // GROUP BY kategori artinya: "Gabungkan semua yang kategorinya sama, lalu jumlahkan"
+        $queryChart = "SELECT kategori, SUM(jumlah) AS total FROM transaksi 
+                       WHERE jenis='Pengeluaran' 
+                       AND MONTH(tanggal)='$bulan_dipilih' 
+                       AND YEAR(tanggal)='$tahun_dipilih'
+                       GROUP BY kategori";
+        $resultChart = mysqli_query($koneksi, $queryChart);
+
+        // Siapkan array kosong buat nampung data
+        $namaKategori = [];
+        $totalPerKategori = [];
+
+        while($row = mysqli_fetch_assoc($resultChart)) {
+            $namaKategori[] = $row['kategori'];
+            $totalPerKategori[] = $row['total'];
+        }
+
+        // Cek dulu, kalau datanya kosong, jangan bikin grafik
+        $adaDataGrafik = count($namaKategori) > 0;
+        ?>
+
+        <?php if($adaDataGrafik): ?>
+            <div style="background: #fff; border: 4px solid #000; padding: 20px; margin-bottom: 20px;">
+                <h3 style="color: #222; text-shadow:none;">Pengeluaran per Kategori 🍩</h3>
+                <div style="width: 300px; margin: 0 auto;">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+
+            <script>
+                // 1. Ambil Data dari PHP yang sudah di-convert jadi JSON
+                const labels = <?php echo json_encode($namaKategori); ?>;
+                const dataTotal = <?php echo json_encode($totalPerKategori); ?>;
+
+                // 2. Settingan Grafik Chart.js
+                const ctx = document.getElementById('myChart');
+                
+                // Ubah font global chart.js jadi pixel
+                Chart.defaults.font.family = "'Press Start 2P', cursive";
+                Chart.defaults.font.size = 10;
+
+                new Chart(ctx, {
+                    type: 'doughnut', // Jenis grafik: Donat
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Jumlah Pengeluaran (Rp)',
+                            data: dataTotal,
+                            borderWidth: 2,
+                            borderColor: '#000',
+                            // Warna-warni retro (Pink, Kuning, Biru, Ungu, Orange)
+                            backgroundColor: [
+                                '#ff0055', '#ffcc00', '#0099ff', '#9900ff', '#ff6600'
+                            ],
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#000' // Warna tulisan legenda
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+        <?php endif; ?>
         <h3>Riwayat Transaksi 📜</h3>
 
         <table border="1" cellpadding="10" cellspacing="0">
@@ -133,15 +200,12 @@
             </thead>
             <tbody>
                 <?php
-                // LOGIKA 3: TAMPILKAN DATA TABEL (DENGAN FILTER)
                 $query = "SELECT * FROM transaksi 
                           WHERE MONTH(tanggal)='$bulan_dipilih' 
                           AND YEAR(tanggal)='$tahun_dipilih'
-                          ORDER BY tanggal DESC"; // Diurutkan tanggal terbaru
-                          
+                          ORDER BY tanggal DESC";
                 $result = mysqli_query($koneksi, $query);
 
-                // Cek jika data kosong
                 if(mysqli_num_rows($result) == 0){
                     echo "<tr><td colspan='6' style='text-align:center;'>Belum ada data di bulan ini.</td></tr>";
                 }
@@ -149,10 +213,8 @@
                 while ($row = mysqli_fetch_assoc($result)) {
                     echo "<tr>";
                     echo "<td>" . $row['tanggal'] . "</td>";
-                    
                     $warna = ($row['jenis'] == 'Pemasukan') ? '#00e676' : '#ff1744';
                     echo "<td style='color:$warna;'>" . $row['jenis'] . "</td>";
-                    
                     echo "<td>" . $row['kategori'] . "</td>";
                     echo "<td>Rp " . number_format($row['jumlah'], 0, ',', '.') . "</td>";
                     echo "<td>" . $row['keterangan'] . "</td>";
