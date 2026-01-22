@@ -1,13 +1,21 @@
-/* --- RESET & VARIABLES --- */
+/* --- IMPORT FONTS --- */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+
 :root {
-  --bg-color: #202028; /* Hitam abu soft */
-  --card-bg: #e0e0d0; /* Putih gading retro */
-  --primary: #4d9be6; /* Biru RPG */
-  --success: #8bce5a; /* Hijau Gameboy */
-  --danger: #d95763; /* Merah Pixel */
-  --text-main: #2d1b4e;
-  --border-light: #ffffff;
-  --border-dark: #202028;
+  /* PALET WARNA BARU (DARK FANTASY) */
+  --bg-color: #121212; /* Hitam Pekat */
+  --window-bg: #1e1e24; /* Abu-abu Gelap Kebiruan (Elegan) */
+  --text-color: #e0e0e0; /* Putih Gading (Tidak silau) */
+  --text-muted: #a0a0a0; /* Abu-abu untuk label */
+
+  --accent: #f1c40f; /* Gold Classy */
+  --primary-btn: #3498db; /* Biru Soft */
+
+  --success: #2ecc71; /* Hijau Daun */
+  --danger: #e74c3c; /* Merah Bata */
+
+  --border: 2px solid #444; /* Border Abu (Lebih tipis & halus) */
+  --shadow: 4px 4px 0px #000;
 }
 
 * {
@@ -15,314 +23,301 @@
 }
 
 body {
-  font-family: "Press Start 2P", cursive;
   background-color: var(--bg-color);
-  color: var(--text-main);
-  padding: 20px;
+  color: var(--text-color);
+  font-family: "VT323", monospace;
+  font-size: 22px; /* Font VT323 diperbesar sedikit biar jelas */
   margin: 0;
-  image-rendering: pixelated;
-  font-size: 12px;
-  line-height: 1.6;
+  padding: 20px;
+  line-height: 1.2;
+  /* Animasi Masuk (Fade In Halus) */
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* --- CONTAINER ALA GAME WINDOW --- */
-.game-container {
-  background-color: var(--card-bg);
-  max-width: 850px;
-  margin: 0 auto;
-  padding: 25px;
-
-  /* Efek 3D Border Khas Retro */
-  border-top: 4px solid var(--border-light);
-  border-left: 4px solid var(--border-light);
-  border-right: 4px solid var(--border-dark);
-  border-bottom: 4px solid var(--border-dark);
-  box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
-}
-
+/* --- JUDUL --- */
 h2,
-h3 {
-  text-align: center;
-  color: var(--text-main);
-  margin-bottom: 25px;
+h3,
+.pixel-font {
+  font-family: "Press Start 2P", cursive;
   text-transform: uppercase;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+h2 {
+  font-size: 16px;
+  color: var(--accent);
+  text-shadow: none;
+  margin-top: 0;
+}
+h3 {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 0;
   letter-spacing: 1px;
 }
 
-hr {
-  border: 2px dashed #999;
-  margin: 30px 0;
+/* --- LAYOUT GRID --- */
+.game-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
-/* --- HEADER BAR (User & Logout) --- */
-.header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff;
-  border: 2px solid #000;
-  padding: 10px 15px;
-  margin-bottom: 25px;
-  box-shadow: 4px 4px 0 #ccc;
-}
-
-/* --- FORMULIR --- */
-form {
-  background: #fff;
+/* --- RPG WINDOW BOX (CLEAN) --- */
+.rpg-box {
+  background-color: var(--window-bg);
+  border: var(--border);
   padding: 20px;
-  border: 2px solid #000;
-  box-shadow: inset 4px 4px 0 #eee; /* Efek kedalaman */
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  position: relative;
+  border-radius: 4px; /* Sedikit lengkung */
 }
 
-label {
+/* Hiasan Garis Header di dalam Box */
+.rpg-box h2::after {
+  content: "";
   display: block;
-  margin-bottom: 8px;
-  font-size: 10px;
-  color: #666;
+  width: 100%;
+  height: 2px;
+  background: #333;
+  margin-top: 10px;
+  margin-bottom: 15px;
 }
 
+/* --- INPUTS (DARK MODE) --- */
 input,
 select,
 textarea {
-  font-family: "Press Start 2P", cursive;
   width: 100%;
-  padding: 12px;
-  border: 2px solid #000;
-  background: #f9f9f9;
-  font-size: 10px;
-  margin-bottom: 20px;
-  transition: all 0.2s;
+  background: #111; /* Input hitam */
+  color: #fff;
+  border: 1px solid #555;
+  padding: 10px;
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  margin-bottom: 15px;
+  border-radius: 4px;
 }
-
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  background: #e6f7ff;
-  border-color: var(--primary);
-  transform: scale(1.01);
+  border-color: var(--accent);
+  background: #000;
+}
+label {
+  font-size: 18px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 5px;
 }
 
-/* --- TOMBOL 3D --- */
-button,
-.btn {
-  font-family: "Press Start 2P", cursive;
-  width: 100%;
-  padding: 15px;
-  border: none;
+/* --- FIX CALENDAR ICON --- */
+/* Membalik warna ikon kalender bawaan Chrome/Edge jadi Putih */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
   cursor: pointer;
-  font-size: 12px;
-  color: #fff;
-  text-transform: uppercase;
-  position: relative;
-
-  /* Efek 3D Button */
-  background-color: var(--primary);
-  border-top: 4px solid rgba(255, 255, 255, 0.4);
-  border-left: 4px solid rgba(255, 255, 255, 0.4);
-  border-right: 4px solid rgba(0, 0, 0, 0.4);
-  border-bottom: 4px solid rgba(0, 0, 0, 0.4);
-  box-shadow: 4px 4px 0px #000;
 }
 
-button:active,
-.btn:active {
-  transform: translate(4px, 4px); /* Efek tombol ditekan */
-  box-shadow: none;
-  border: none; /* Hilangkan border 3D saat ditekan */
-  background-color: #3a8ccf;
-}
-
-/* Warna Khusus Tombol */
-.btn-danger {
-  background-color: var(--danger);
-}
-.btn-success {
-  background-color: var(--success);
-  color: #000;
-}
-
-/* --- DASHBOARD SALDO (RESPONSIF) --- */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 Kolom */
-  gap: 15px;
-  margin-bottom: 30px;
-}
-
-.card {
-  background: #202028;
-  color: #fff;
-  padding: 20px;
+/* --- BUTTONS --- */
+.btn {
+  display: inline-block;
+  width: 100%;
   text-align: center;
-  border: 4px solid #000;
-  position: relative;
+  background: var(--primary-btn);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-family: "Press Start 2P", cursive;
+  font-size: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  border-radius: 4px;
+  transition: transform 0.1s;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #000;
+}
+.btn-danger {
+  background: var(--danger);
+}
+.btn-small {
+  width: auto;
+  padding: 8px 12px;
+  font-size: 8px;
 }
 
-.card::after {
-  /* Hiasan baut di pojok */
-  content: "";
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 6px;
-  height: 6px;
-  background: #555;
-  box-shadow: -5px 0 0 #555; /* Baut kedua */
+/* --- HEADER BAR --- */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--accent); /* Aksen gold di bawah header */
+}
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 4px;
+  border: 1px solid #fff;
+  margin-right: 15px;
 }
 
-.card small {
-  color: #aaa;
+/* --- STATS CARDS (MINIMALIS) --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat-item {
+  text-align: center;
+  background: #15151a;
+  border: 1px solid #333;
+  padding: 15px 5px;
+  border-radius: 4px;
+}
+.stat-item small {
+  color: #777;
+  font-family: "Press Start 2P";
   font-size: 8px;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
-.card .nominal {
-  font-size: 14px;
-  margin-top: 5px;
-  display: block;
+.stat-val {
+  font-size: 26px;
+  font-weight: normal;
 }
+
 .text-green {
   color: var(--success);
 }
 .text-red {
   color: var(--danger);
 }
-.text-white {
-  color: #fff;
+.text-yellow {
+  color: var(--accent);
 }
 
-/* --- FILTER BAR --- */
-.filter-box {
-  background: #dcdcdc;
-  padding: 15px;
-  border: 2px dashed #777;
-  text-align: center;
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.filter-box select {
-  width: auto;
-  margin-bottom: 0;
-}
-.filter-box button {
-  width: auto;
-  padding: 12px 20px;
-}
-
-/* --- TABEL (Agar bisa discroll di HP) --- */
-.table-responsive {
+/* --- TABLE (CLEAN LOOK) --- */
+.table-wrapper {
   overflow-x: auto;
-  border: 4px solid #000;
+  border: 1px solid #333;
+  border-radius: 4px;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  white-space: nowrap; /* Mencegah teks turun baris di HP */
+  background: #15151a;
 }
-
 th {
-  background-color: var(--bg-color);
-  color: #fff;
-  padding: 15px;
+  background: #111;
+  color: #888;
   text-align: left;
-  font-size: 10px;
+  padding: 12px 15px;
+  font-family: "Press Start 2P";
+  font-size: 9px;
+  border-bottom: 1px solid #333;
 }
-
 td {
-  border-bottom: 2px solid #ddd;
-  padding: 15px;
-  font-size: 10px;
+  border-bottom: 1px solid #222;
+  padding: 12px 15px;
+  font-size: 20px;
 }
-
 tr:hover {
-  background-color: #f0f0f0;
+  background: #1e1e24;
 }
 
-/* Tombol Aksi Kecil */
-.btn-small {
-  padding: 8px 10px;
-  font-size: 8px;
-  width: auto;
-  display: inline-block;
-  text-decoration: none;
-  margin-right: 5px;
-  box-shadow: 2px 2px 0 #000;
+/* --- BUDGET BAR --- */
+.hp-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #333;
+  border-radius: 4px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.hp-bar-fill {
+  height: 100%;
+  background: var(--success);
+}
+.hp-warning {
+  background: var(--danger);
 }
 
-/* --- RESPONSIF UTAMA (HP) --- */
-@media (max-width: 600px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr; /* Jadi 1 kolom vertikal */
+/* --- RESPONSIVE --- */
+@media (max-width: 800px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
   }
-  .header-bar {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-  body {
-    padding: 10px;
-  }
-  .game-container {
-    padding: 15px;
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-/* --- CUSTOM MODAL (KOTAK DIALOG RPG) --- */
+/* --- ANIMATION & TRANSITIONS --- */
+
+/* 1. Animasi Masuk (Hanya Opacity, Tanpa Transform/Geser) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 2. Animasi Keluar (Fade Out) - Class 'exiting' ditambah via JS */
+body.exiting {
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+  pointer-events: none;
+}
+
+/* --- MODAL ABSOLUTE CENTER FIX --- */
 .modal-overlay {
-  position: fixed;
+  position: fixed; /* Wajib Fixed */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8); /* Gelap transparan */
-  display: none; /* Sembunyi dulu */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  width: 100vw; /* Lebar layar penuh */
+  height: 100vh; /* Tinggi layar penuh */
+  background: rgba(0, 0, 0, 0.85);
+  display: none; /* Flex diaktifkan via JS */
+  justify-content: center; /* Center Horizontal */
+  align-items: center; /* Center Vertikal */
+  z-index: 99999; /* Paling depan */
+  backdrop-filter: blur(5px); /* Efek blur background */
+  padding: 20px; /* Jaga jarak di HP */
 }
 
-.modal-box {
-  background: var(--card-bg);
-  border: 4px solid #fff;
-  padding: 20px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 10px 10px 0 #000;
+/* Reset margin agar hitungan center akurat */
+.modal-overlay .modal-box {
+  margin: 0 !important;
   position: relative;
-  animation: popUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  max-width: 450px; /* Batas lebar maksimal */
+  width: 100%; /* Responsive */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8); /* Bayangan lebih dalam */
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efek membal */
 }
 
-.modal-box h3 {
-  margin-top: 0;
-  font-size: 14px;
-  color: var(--danger);
-}
-
-.modal-box p {
-  font-size: 10px;
-  margin-bottom: 20px;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Animasi muncul */
-@keyframes popUp {
+/* Animasi Pop-Up Modal */
+@keyframes popIn {
   0% {
-    transform: scale(0);
+    transform: scale(0.8);
+    opacity: 0;
   }
   100% {
     transform: scale(1);
+    opacity: 1;
   }
 }
