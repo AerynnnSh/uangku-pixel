@@ -1,107 +1,231 @@
-/* --- SETTINGAN AWAL --- */
+/* --- RESET & VARIABLES --- */
 :root {
-  --bg-color: #2d1b4e; /* Ungu gelap */
-  --container-bg: #f0f0f0; /* Abu terang */
-  --text-color: #222;
-  --accent-green: #00e676; /* Hijau neon */
-  --accent-red: #ff1744; /* Merah neon */
-  --border-style: 4px solid #000; /* Border tebal khas pixel */
+  --bg-color: #202028; /* Hitam abu soft */
+  --card-bg: #e0e0d0; /* Putih gading retro */
+  --primary: #4d9be6; /* Biru RPG */
+  --success: #8bce5a; /* Hijau Gameboy */
+  --danger: #d95763; /* Merah Pixel */
+  --text-main: #2d1b4e;
+  --border-light: #ffffff;
+  --border-dark: #202028;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   font-family: "Press Start 2P", cursive;
   background-color: var(--bg-color);
-  padding: 30px;
+  color: var(--text-main);
+  padding: 20px;
+  margin: 0;
   image-rendering: pixelated;
   font-size: 12px;
-  color: var(--text-color);
+  line-height: 1.6;
 }
 
-/* --- WADAH UTAMA (Biar rapi di tengah) --- */
+/* --- CONTAINER ALA GAME WINDOW --- */
 .game-container {
-  background-color: var(--container-bg);
-  border: var(--border-style);
-  box-shadow: 8px 8px 0px #000;
-  max-width: 800px;
+  background-color: var(--card-bg);
+  max-width: 850px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 25px;
+
+  /* Efek 3D Border Khas Retro */
+  border-top: 4px solid var(--border-light);
+  border-left: 4px solid var(--border-light);
+  border-right: 4px solid var(--border-dark);
+  border-bottom: 4px solid var(--border-dark);
+  box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.5);
 }
 
-h1,
 h2,
 h3 {
   text-align: center;
+  color: var(--text-main);
+  margin-bottom: 25px;
   text-transform: uppercase;
-  color: var(--bg-color);
-  text-shadow: 2px 2px 0px #bbb;
-  margin-bottom: 30px;
-  line-height: 1.5;
+  letter-spacing: 1px;
+}
+
+hr {
+  border: 2px dashed #999;
+  margin: 30px 0;
+}
+
+/* --- HEADER BAR (User & Logout) --- */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #000;
+  padding: 10px 15px;
+  margin-bottom: 25px;
+  box-shadow: 4px 4px 0 #ccc;
 }
 
 /* --- FORMULIR --- */
 form {
-  border: var(--border-style);
-  padding: 20px;
   background: #fff;
-  margin-bottom: 30px;
+  padding: 20px;
+  border: 2px solid #000;
+  box-shadow: inset 4px 4px 0 #eee; /* Efek kedalaman */
 }
 
 label {
   display: block;
-  margin-bottom: 10px;
-  color: #555;
+  margin-bottom: 8px;
+  font-size: 10px;
+  color: #666;
 }
 
 input,
 select,
 textarea {
   font-family: "Press Start 2P", cursive;
-  width: 90%; /* Diset 90% biar gak nabrak pinggir */
-  padding: 10px;
+  width: 100%;
+  padding: 12px;
   border: 2px solid #000;
-  background: #eee;
+  background: #f9f9f9;
   font-size: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  transition: all 0.2s;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  background: #fff;
-  border-color: var(--accent-green);
+  background: #e6f7ff;
+  border-color: var(--primary);
+  transform: scale(1.01);
 }
 
-/* --- TOMBOL --- */
+/* --- TOMBOL 3D --- */
 button,
 .btn {
   font-family: "Press Start 2P", cursive;
-  background-color: var(--accent-green);
-  color: #000;
-  border: var(--border-style);
-  padding: 15px 20px;
-  cursor: pointer;
   width: 100%;
+  padding: 15px;
+  border: none;
+  cursor: pointer;
   font-size: 12px;
+  color: #fff;
+  text-transform: uppercase;
+  position: relative;
+
+  /* Efek 3D Button */
+  background-color: var(--primary);
+  border-top: 4px solid rgba(255, 255, 255, 0.4);
+  border-left: 4px solid rgba(255, 255, 255, 0.4);
+  border-right: 4px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 4px solid rgba(0, 0, 0, 0.4);
   box-shadow: 4px 4px 0px #000;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
 }
 
 button:active,
 .btn:active {
-  transform: translate(4px, 4px);
+  transform: translate(4px, 4px); /* Efek tombol ditekan */
   box-shadow: none;
+  border: none; /* Hilangkan border 3D saat ditekan */
+  background-color: #3a8ccf;
 }
 
-/* --- TABEL --- */
+/* Warna Khusus Tombol */
+.btn-danger {
+  background-color: var(--danger);
+}
+.btn-success {
+  background-color: var(--success);
+  color: #000;
+}
+
+/* --- DASHBOARD SALDO (RESPONSIF) --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Kolom */
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: #202028;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  border: 4px solid #000;
+  position: relative;
+}
+
+.card::after {
+  /* Hiasan baut di pojok */
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 6px;
+  height: 6px;
+  background: #555;
+  box-shadow: -5px 0 0 #555; /* Baut kedua */
+}
+
+.card small {
+  color: #aaa;
+  font-size: 8px;
+  display: block;
+  margin-bottom: 10px;
+}
+.card .nominal {
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}
+.text-green {
+  color: var(--success);
+}
+.text-red {
+  color: var(--danger);
+}
+.text-white {
+  color: #fff;
+}
+
+/* --- FILTER BAR --- */
+.filter-box {
+  background: #dcdcdc;
+  padding: 15px;
+  border: 2px dashed #777;
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-box select {
+  width: auto;
+  margin-bottom: 0;
+}
+.filter-box button {
+  width: auto;
+  padding: 12px 20px;
+}
+
+/* --- TABEL (Agar bisa discroll di HP) --- */
+.table-responsive {
+  overflow-x: auto;
+  border: 4px solid #000;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  border: var(--border-style);
-  font-size: 10px;
   background: #fff;
+  white-space: nowrap; /* Mencegah teks turun baris di HP */
 }
 
 th {
@@ -109,31 +233,96 @@ th {
   color: #fff;
   padding: 15px;
   text-align: left;
+  font-size: 10px;
 }
 
 td {
-  border: 2px solid #000;
-  padding: 10px;
+  border-bottom: 2px solid #ddd;
+  padding: 15px;
+  font-size: 10px;
 }
 
-/* Link Aksi (Edit/Hapus) */
-td a {
-  text-decoration: none;
-  color: #fff;
-  padding: 5px 8px;
-  border: 2px solid #000;
-  display: inline-block;
+tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Tombol Aksi Kecil */
+.btn-small {
+  padding: 8px 10px;
   font-size: 8px;
+  width: auto;
+  display: inline-block;
+  text-decoration: none;
+  margin-right: 5px;
+  box-shadow: 2px 2px 0 #000;
 }
 
-td a[href*="hapus"] {
-  background-color: var(--accent-red);
-}
-td a[href*="edit"] {
-  background-color: #2980b9;
+/* --- RESPONSIF UTAMA (HP) --- */
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* Jadi 1 kolom vertikal */
+  }
+  .header-bar {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  body {
+    padding: 10px;
+  }
+  .game-container {
+    padding: 15px;
+  }
 }
 
-td a:hover {
-  opacity: 0.8;
-  transform: scale(1.05);
+/* --- CUSTOM MODAL (KOTAK DIALOG RPG) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8); /* Gelap transparan */
+  display: none; /* Sembunyi dulu */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: var(--card-bg);
+  border: 4px solid #fff;
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 10px 10px 0 #000;
+  position: relative;
+  animation: popUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.modal-box h3 {
+  margin-top: 0;
+  font-size: 14px;
+  color: var(--danger);
+}
+
+.modal-box p {
+  font-size: 10px;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Animasi muncul */
+@keyframes popUp {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
